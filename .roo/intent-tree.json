@@ -9,7 +9,8 @@
 			"status": "done",
 			"parentId": null,
 			"childrenIds": [
-				"c9164e3a-6808-4071-bdd5-8839250775e7"
+				"c9164e3a-6808-4071-bdd5-8839250775e7",
+				"4fcbe8b4-3c00-46be-b4e2-4776fbc55a26"
 			],
 			"codeBindings": [],
 			"createdBy": {
@@ -32,10 +33,25 @@
 					"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
 					"timestamp": "2026-03-24T11:35:46.645Z",
 					"action": "updated: content, status→done"
+				},
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:45:43.012Z",
+					"action": "cascade: done→planned (child added: O1.2)"
+				},
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:46:18.917Z",
+					"action": "cascade: planned→in_progress (child I1.2.1.1 started)"
+				},
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:53:30.381Z",
+					"action": "cascade: in_progress→done (all children terminated)"
 				}
 			],
 			"assumption": "用户需要一个完整的多模态交互系统。核心流程：语音→多模态API→选项匹配→函数执行。尚未确认API选择和语音处理方式。",
-			"maxChildIndex": 1
+			"maxChildIndex": 2
 		},
 		"c9164e3a-6808-4071-bdd5-8839250775e7": {
 			"id": "c9164e3a-6808-4071-bdd5-8839250775e7",
@@ -95,6 +111,213 @@
 				}
 			],
 			"assumption": "框架核心组件已完成：IOption接口、OptionRegistry、VoiceRecorder、QwenVLClient、MultimodalController、BaseOption、DemoScene。需要验证编译是否通过。"
+		},
+		"4fcbe8b4-3c00-46be-b4e2-4776fbc55a26": {
+			"id": "4fcbe8b4-3c00-46be-b4e2-4776fbc55a26",
+			"shortId": "O1.2",
+			"type": "objective",
+			"content": "集成 Eureka-Audio 本地语音转文字服务",
+			"status": "done",
+			"parentId": "27838408-50dc-4660-ac78-8d8bc57add4b",
+			"childrenIds": [
+				"e51b4979-5405-44f7-a52a-f04aeb254089"
+			],
+			"codeBindings": [],
+			"createdBy": {
+				"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+				"timestamp": "2026-03-24T15:45:43.012Z",
+				"action": "created"
+			},
+			"modifiedBy": [
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:46:18.917Z",
+					"action": "cascade: planned→in_progress (child I1.2.1.1 started)"
+				},
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:53:30.381Z",
+					"action": "cascade: in_progress→done (all children terminated)"
+				}
+			],
+			"assumption": "用户明确要求使用 Eureka-Audio 本地模型进行语音转文字，这是新的功能需求，与现有的直接发送音频给大模型的方案不同。",
+			"maxChildIndex": 1
+		},
+		"e51b4979-5405-44f7-a52a-f04aeb254089": {
+			"id": "e51b4979-5405-44f7-a52a-f04aeb254089",
+			"shortId": "A1.2.1",
+			"type": "approach",
+			"content": "创建 Eureka-Audio 本地 HTTP 服务",
+			"status": "done",
+			"parentId": "4fcbe8b4-3c00-46be-b4e2-4776fbc55a26",
+			"childrenIds": [
+				"d2a7a000-ca28-4105-abf4-e1e7a53d2759",
+				"35e03047-1201-44fb-afa4-b9822934bc48",
+				"9fea37f2-b06e-41b3-9357-9860ffbe6815"
+			],
+			"codeBindings": [],
+			"createdBy": {
+				"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+				"timestamp": "2026-03-24T15:45:53.393Z",
+				"action": "created"
+			},
+			"modifiedBy": [
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:46:18.917Z",
+					"action": "cascade: planned→in_progress (child I1.2.1.1 started)"
+				},
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:53:30.381Z",
+					"action": "cascade: in_progress→done (all children terminated)"
+				}
+			],
+			"assumption": "Eureka-Audio 是 Python 模型，需要通过 HTTP 服务暴露给 Godot C# 调用。这是最简单可靠的跨语言通信方式。",
+			"maxChildIndex": 3
+		},
+		"d2a7a000-ca28-4105-abf4-e1e7a53d2759": {
+			"id": "d2a7a000-ca28-4105-abf4-e1e7a53d2759",
+			"shortId": "I1.2.1.1",
+			"type": "impl",
+			"content": "创建 Python FastAPI 服务脚本，提供 /transcribe 接口",
+			"status": "done",
+			"parentId": "e51b4979-5405-44f7-a52a-f04aeb254089",
+			"childrenIds": [],
+			"codeBindings": [],
+			"createdBy": {
+				"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+				"timestamp": "2026-03-24T15:46:07.153Z",
+				"action": "created"
+			},
+			"modifiedBy": [
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:46:18.917Z",
+					"action": "updated: content, status→in_progress"
+				},
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:47:54.278Z",
+					"action": "updated: content, status→done"
+				}
+			],
+			"assumption": "HTTP 服务需要接收音频文件，调用 Eureka-Audio 进行 ASR，返回文字结果。"
+		},
+		"35e03047-1201-44fb-afa4-b9822934bc48": {
+			"id": "35e03047-1201-44fb-afa4-b9822934bc48",
+			"shortId": "I1.2.1.2",
+			"type": "impl",
+			"content": "创建 EurekaServiceManager 组件，游戏启动时自动部署服务",
+			"status": "done",
+			"parentId": "e51b4979-5405-44f7-a52a-f04aeb254089",
+			"childrenIds": [],
+			"codeBindings": [],
+			"createdBy": {
+				"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+				"timestamp": "2026-03-24T15:46:11.976Z",
+				"action": "created"
+			},
+			"modifiedBy": [
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:47:54.684Z",
+					"action": "updated: content, status→in_progress"
+				},
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:48:42.013Z",
+					"action": "updated: content, status→done"
+				}
+			],
+			"assumption": "Godot 需要在启动时自动启动 Python 服务，确保语音功能可用。"
+		},
+		"9fea37f2-b06e-41b3-9357-9860ffbe6815": {
+			"id": "9fea37f2-b06e-41b3-9357-9860ffbe6815",
+			"shortId": "I1.2.1.3",
+			"type": "impl",
+			"content": "修改 MultimodalController 和 QwenVLClient，集成语音转文字流程",
+			"status": "done",
+			"parentId": "e51b4979-5405-44f7-a52a-f04aeb254089",
+			"childrenIds": [],
+			"codeBindings": [
+				{
+					"commitHash": "4aba339e0dff54ced0ac20730e4d27a6ed2db8ae",
+					"commitMessage": "[intent:I1.2.1.3] 集成 Eureka-Audio 本地语音转文字服务\n\n- 新增 eureka_service/ 目录，包含 FastAPI 服务脚本和启动脚本\n- 新增 EurekaServiceManager 组件，游戏启动时自动部署服务\n- 修改 MultimodalController，集成语音转文字流程\n- 修改 QwenVLClient，新增 SendTextForMatching 方法\n- 更新 FrameworkConfig，新增 AsrConfig 配置\n- 更新 README.md 文档",
+					"files": [
+						".gitignore",
+						".roo/cache/search/1.md",
+						".roo/cache/search/index.json",
+						".roo/intent-tree.json",
+						".vs/MULTIMODALITY FRAME/DesignTimeBuild/.dtbcache.v2",
+						".vs/MULTIMODALITY FRAME/FileContentIndex/2f1701e9-f9cd-4d8c-af3c-dd38cc8fe00c.vsidx",
+						".vs/MULTIMODALITY FRAME/v17/.futdcache.v2",
+						".vs/MULTIMODALITY FRAME/v17/.suo",
+						".vs/MULTIMODALITY FRAME/v17/DocumentLayout.backup.json",
+						".vs/MULTIMODALITY FRAME/v17/DocumentLayout.json",
+						".vs/ProjectEvaluation/multimodality frame.metadata.v9.bin",
+						".vs/ProjectEvaluation/multimodality frame.projects.v9.bin",
+						".vs/ProjectEvaluation/multimodality frame.strings.v9.bin",
+						".vscode/settings.json",
+						"Multimodality Frame.csproj",
+						"Multimodality Frame.sln",
+						"README.md",
+						"config.example.json",
+						"eureka_service/requirements.txt",
+						"eureka_service/server.py",
+						"eureka_service/start_service.bat",
+						"eureka_service/start_service.sh",
+						"multimodality-frame.csproj",
+						"project.godot",
+						"scenes/demo.tscn",
+						"scripts/Demo/DemoScene.cs",
+						"scripts/Demo/DemoScene.cs.uid",
+						"scripts/MultimodalFramework/BaseOption.cs.uid",
+						"scripts/MultimodalFramework/EurekaServiceManager.cs",
+						"scripts/MultimodalFramework/FrameworkConfig.cs",
+						"scripts/MultimodalFramework/FrameworkConfig.cs.uid",
+						"scripts/MultimodalFramework/IOption.cs.uid",
+						"scripts/MultimodalFramework/MultimodalController.cs",
+						"scripts/MultimodalFramework/MultimodalController.cs.uid",
+						"scripts/MultimodalFramework/OptionRegistry.cs.uid",
+						"scripts/MultimodalFramework/QwenVLClient.cs",
+						"scripts/MultimodalFramework/QwenVLClient.cs.uid",
+						"scripts/MultimodalFramework/VoiceRecorder.cs",
+						"scripts/MultimodalFramework/VoiceRecorder.cs.uid",
+						"temp_eureka"
+					],
+					"diffSummary": "40 file(s), +1460 -67",
+					"timestamp": "2026-03-24T15:53:48.081Z"
+				}
+			],
+			"createdBy": {
+				"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+				"timestamp": "2026-03-24T15:46:12.128Z",
+				"action": "created"
+			},
+			"modifiedBy": [
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:48:42.531Z",
+					"action": "updated: content, status→in_progress"
+				},
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:53:30.381Z",
+					"action": "updated: content, status→done"
+				},
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:53:48.081Z",
+					"action": "bound commit 4aba339"
+				},
+				{
+					"taskId": "019d2081-b09c-74ef-a441-19c593702d97",
+					"timestamp": "2026-03-24T15:53:48.081Z",
+					"action": "updated: status→done"
+				}
+			],
+			"assumption": "需要修改现有的语音处理流程，先转文字再发送给大模型。"
 		}
 	},
 	"rootIds": [
@@ -103,7 +326,12 @@
 	"shortIdIndex": {
 		"G1": "27838408-50dc-4660-ac78-8d8bc57add4b",
 		"O1.1": "c9164e3a-6808-4071-bdd5-8839250775e7",
-		"I1.1.1": "850e65f2-7f9b-4437-94e7-601dd7855dce"
+		"I1.1.1": "850e65f2-7f9b-4437-94e7-601dd7855dce",
+		"O1.2": "4fcbe8b4-3c00-46be-b4e2-4776fbc55a26",
+		"A1.2.1": "e51b4979-5405-44f7-a52a-f04aeb254089",
+		"I1.2.1.1": "d2a7a000-ca28-4105-abf4-e1e7a53d2759",
+		"I1.2.1.2": "35e03047-1201-44fb-afa4-b9822934bc48",
+		"I1.2.1.3": "9fea37f2-b06e-41b3-9357-9860ffbe6815"
 	},
 	"rootMaxChildIndex": 1
 }

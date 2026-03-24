@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace MultimodalFramework
 {
     /// <summary>
-    /// 多模态交互主控制器，整合语音录制、API调用和选项执行
+    /// 多模态交互主控制器，整合语音录制、语音转文字、API调用和选项执行
     /// </summary>
     public partial class MultimodalController : Node
     {
@@ -21,21 +21,66 @@ namespace MultimodalFramework
         [Signal]
         public delegate void ErrorEventHandler(string message);
         
+        [Signal]
+        public delegate void TranscriptionCompletedEventHandler(string text);
+        
+        [Signal]
+        public delegate void ServiceStatusChangedEventHandler(bool isReady);
+        
         [Export]
         public string ApiKey { get; set; } = "";
         
         [Export]
         public bool AutoStartRecording { get; set; } = false;
         
+        [Export]
+        public string ConfigPath { get; set; } = "config.json";
+        
+        [Export]
+        public bool UseLocalASR { get; set; } = true; // 使用本地语音转文字
+        
+        [Export]
+        public int EurekaServicePort { get; set; } = 8765;
+        
         private VoiceRecorder _voiceRecorder;
         private QwenVLClient _apiClient;
+        private EurekaServiceManager _eurekaService;
         private OptionRegistry _optionRegistry;
         private bool _isProcessingRequest = false;
+        private FrameworkConfig _config;
+        private string _pendingAudioBase64;
         
         public override void _Ready()
         {
+            // 加载配置文件
+            LoadConfig();
+            
             // 初始化组件
             _optionRegistry = new OptionRegistry();
+            
+            // 初始化语音转文字服务
+            if (UseLocalASR || (_config?.Asr?.UseLocal ?? true))
+            {
+                _eurekaService = new EurekaServiceManager
+                {
+                    ServicePort = _config?.Asr?.ServicePort ?? EurekaServicePort,
+                    AutoStart = true
+                };
+                
+                // 应用 ASR 配置
+                if (_config?.Asr != null)
+                {
+                    if (!string.IsNullOrEmpty(_config.Asr.ModelPath))
+                    {
+                        _eurekaService.ModelPath = _config.Asr.ModelPath;
+                    }
+                    _eurekaService.StartupTimeoutMs = _config.Asr.StartupTimeoutMs;
+                }
+                
+                AddChild(_eurekaService);
+                _eurekaService.ServiceReady += OnEurekaServiceReady;
+                _eurekaService.ServiceFailed += OnEurekaServiceFailed;
+            }
             
             _voiceRecorder = new VoiceRecorder();
             AddChild(_voiceRecorder);
@@ -43,15 +88,52 @@ namespace MultimodalFramework
             _voiceRecorder.RecordingFailed += OnRecordingFailed;
             
             _apiClient = new QwenVLClient();
-            _apiClient.ApiKey = ApiKey;
+            ApplyConfigToClient();
             AddChild(_apiClient);
             _apiClient.SetOptionRegistry(_optionRegistry);
             _apiClient.ResponseReceived += OnResponseReceived;
             _apiClient.RequestFailed += OnRequestFailed;
             
-            if (AutoStartRecording)
+            if (AutoStartRecording || (_config?.Recording.AutoStart ?? false))
             {
-                StartListening();
+                // 等待服务就绪后再开始录制
+                if (UseLocalASR && (_eurekaService?.IsServiceReady ?? false))
+                {
+                    StartListening();
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 加载配置文件
+        /// </summary>
+        private void LoadConfig()
+        {
+            _config = FrameworkConfig.Load(ConfigPath);
+        }
+        
+        /// <summary>
+        /// 应用配置到API客户端
+        /// </summary>
+        private void ApplyConfigToClient()
+        {
+            // 优先使用代码设置的 ApiKey，其次使用配置文件
+            if (!string.IsNullOrEmpty(ApiKey))
+            {
+                _apiClient.ApiKey = ApiKey;
+            }
+            else if (_config != null && !string.IsNullOrEmpty(_config.Api.Key))
+            {
+                _apiClient.ApiKey = _config.Api.Key;
+            }
+            
+            // 应用其他配置
+            if (_config != null)
+            {
+                _apiClient.ApiEndpoint = _config.Api.Endpoint;
+                _apiClient.ModelName = _config.Api.Model;
+                _apiClient.Temperature = _config.Api.Temperature;
+                _apiClient.MaxTokens = _config.Api.MaxTokens;
             }
         }
         
@@ -94,12 +176,80 @@ namespace MultimodalFramework
         }
         
         /// <summary>
+        /// Eureka 服务就绪回调
+        /// </summary>
+        private void OnEurekaServiceReady()
+        {
+            GD.Print("Eureka ASR service is ready");
+            EmitSignal(SignalName.ServiceStatusChanged, true);
+            
+            // 如果配置了自动开始录制，现在开始
+            if (AutoStartRecording || (_config?.Recording.AutoStart ?? false))
+            {
+                StartListening();
+            }
+        }
+        
+        /// <summary>
+        /// Eureka 服务失败回调
+        /// </summary>
+        private void OnEurekaServiceFailed(string error)
+        {
+            GD.PrintErr($"Eureka ASR service failed: {error}");
+            EmitSignal(SignalName.ServiceStatusChanged, false);
+            EmitSignal(SignalName.Error, $"ASR service failed: {error}");
+        }
+        
+        /// <summary>
         /// 录制完成回调
         /// </summary>
         private void OnRecordingCompleted(string audioBase64)
         {
             _isProcessingRequest = true;
-            _apiClient.SendVoiceForMatching(audioBase64, "wav");
+            
+            if (UseLocalASR && _eurekaService != null && _eurekaService.IsServiceReady)
+            {
+                // 使用本地 ASR 服务转写
+                _pendingAudioBase64 = audioBase64;
+                TranscribeAudioAsync(audioBase64);
+            }
+            else
+            {
+                // 直接发送音频给大模型（旧方式，可能不支持）
+                GD.Print("Local ASR not available, sending audio directly to API");
+                _apiClient.SendVoiceForMatching(audioBase64, "wav");
+            }
+        }
+        
+        /// <summary>
+        /// 异步转写音频
+        /// </summary>
+        private async void TranscribeAudioAsync(string audioBase64)
+        {
+            try
+            {
+                var result = await _eurekaService.TranscribeBase64(audioBase64, "wav");
+                
+                if (result.Success)
+                {
+                    string transcribedText = result.Text;
+                    GD.Print($"Transcription: {transcribedText}");
+                    EmitSignal(SignalName.TranscriptionCompleted, transcribedText);
+                    
+                    // 发送转写后的文字给大模型进行选项匹配
+                    _apiClient.SendTextForMatching(transcribedText);
+                }
+                else
+                {
+                    _isProcessingRequest = false;
+                    EmitSignal(SignalName.Error, $"Transcription failed: {result.Error}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _isProcessingRequest = false;
+                EmitSignal(SignalName.Error, $"Transcription error: {ex.Message}");
+            }
         }
         
         /// <summary>
@@ -188,5 +338,10 @@ namespace MultimodalFramework
         /// 是否正在录制
         /// </summary>
         public bool IsRecording => _voiceRecorder?.IsRecording ?? false;
+        
+        /// <summary>
+        /// ASR 服务是否就绪
+        /// </summary>
+        public bool IsASRReady => _eurekaService?.IsServiceReady ?? false;
     }
 }

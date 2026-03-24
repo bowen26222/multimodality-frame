@@ -19,29 +19,41 @@ namespace MultimodalFramework
         public float RecordingMaxDuration { get; set; } = 30f; // 最大录制时长（秒）
         
         private AudioEffectRecord _recordEffect;
-        private AudioStreamMicrophone _microphone;
+        private AudioStreamPlayer _micPlayer;
         private bool _isRecording = false;
         private float _recordingTime = 0f;
         private string _tempFilePath;
+        private int _recordBusIndex = -1;
         
         public override void _Ready()
         {
             // 创建临时文件路径
             _tempFilePath = Path.Combine(System.IO.Path.GetTempPath(), "godot_voice_recording.wav");
             
-            // 获取录音总线
-            var recordBus = AudioServer.GetBusIndex("Record");
-            if (recordBus == -1)
+            // 获取或创建录音总线
+            _recordBusIndex = AudioServer.GetBusIndex("Record");
+            if (_recordBusIndex == -1)
             {
                 // 如果不存在Record总线，创建一个
                 AudioServer.AddBus();
-                recordBus = AudioServer.BusCount - 1;
-                AudioServer.SetBusName(recordBus, "Record");
+                _recordBusIndex = AudioServer.BusCount - 1;
+                AudioServer.SetBusName(_recordBusIndex, "Record");
             }
             
             // 添加录音效果
             _recordEffect = new AudioEffectRecord();
-            AudioServer.AddBusEffect(recordBus, _recordEffect);
+            AudioServer.AddBusEffect(_recordBusIndex, _recordEffect);
+            
+            // 创建麦克风播放器，将麦克风输入路由到录音总线
+            _micPlayer = new AudioStreamPlayer();
+            _micPlayer.Stream = new AudioStreamMicrophone();
+            _micPlayer.Bus = "Record";
+            AddChild(_micPlayer);
+            
+            // 启动麦克风（必须播放才能捕获音频）
+            _micPlayer.Play();
+            
+            GD.Print("VoiceRecorder initialized, microphone active");
         }
         
         /// <summary>

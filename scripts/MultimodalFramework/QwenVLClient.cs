@@ -3,12 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace MultimodalFramework
 {
     /// <summary>
-    /// Qwen3 VL API客户端，支持多模态输入和结构化输出
+    /// 大模型 API 客户端，支持文本输入和结构化输出
     /// </summary>
     public partial class QwenVLClient : Node
     {
@@ -52,7 +51,29 @@ namespace MultimodalFramework
         }
         
         /// <summary>
-        /// 发送语音进行识别和匹配
+        /// 发送文本进行选项匹配
+        /// </summary>
+        /// <param name="text">用户输入的文本</param>
+        public void SendTextForMatching(string text)
+        {
+            if (string.IsNullOrEmpty(ApiKey))
+            {
+                EmitSignal(SignalName.RequestFailed, "API Key not configured");
+                return;
+            }
+            
+            if (_optionRegistry == null)
+            {
+                EmitSignal(SignalName.RequestFailed, "Option registry not set");
+                return;
+            }
+            
+            var requestBody = BuildTextRequestBody(text);
+            SendRequest(requestBody);
+        }
+        
+        /// <summary>
+        /// 发送语音进行识别和匹配（旧方式，可能不被所有模型支持）
         /// </summary>
         /// <param name="audioBase64">Base64编码的音频数据</param>
         /// <param name="audioFormat">音频格式（wav, mp3等）</param>
@@ -70,14 +91,69 @@ namespace MultimodalFramework
                 return;
             }
             
-            var requestBody = BuildRequestBody(audioBase64, audioFormat);
+            var requestBody = BuildAudioRequestBody(audioBase64, audioFormat);
             SendRequest(requestBody);
         }
         
         /// <summary>
-        /// 构建API请求体
+        /// 构建文本请求体
         /// </summary>
-        private string BuildRequestBody(string audioBase64, string audioFormat)
+        private string BuildTextRequestBody(string text)
+        {
+            var optionsDescription = _optionRegistry.GenerateOptionsDescription();
+            
+            var systemPrompt = $@"你是一个多模态交互助手。你的任务是分析用户的输入，并从可用选项中选择最匹配的一个。
+
+{optionsDescription}
+
+请严格按照以下JSON格式输出：
+{{
+    ""matched"": true/false,
+    ""option_id"": ""选项ID（如果匹配到）"",
+    ""confidence"": 0.0-1.0的置信度,
+    ""parameters"": {{}} // 从用户输入中提取的参数
+}}
+
+如果没有匹配到任何选项，请输出：
+{{
+    ""matched"": false,
+    ""reason"": ""未匹配的原因"",
+    ""user_intent"": ""用户可能的意图描述""
+}}
+
+注意：
+1. 只有当置信度超过0.7时才认为匹配成功
+2. 参数字段应包含执行选项所需的任何额外信息
+3. 必须严格按照JSON格式输出，不要包含其他文字";
+
+            var request = new
+            {
+                model = ModelName,
+                messages = new object[]
+                {
+                    new Dictionary<string, object>
+                    {
+                        ["role"] = "system",
+                        ["content"] = systemPrompt
+                    },
+                    new Dictionary<string, object>
+                    {
+                        ["role"] = "user",
+                        ["content"] = text
+                    }
+                },
+                temperature = Temperature,
+                max_tokens = MaxTokens,
+                response_format = new Dictionary<string, string> { ["type"] = "json_object" }
+            };
+            
+            return JsonSerializer.Serialize(request);
+        }
+        
+        /// <summary>
+        /// 构建音频请求体（旧方式）
+        /// </summary>
+        private string BuildAudioRequestBody(string audioBase64, string audioFormat)
         {
             var optionsDescription = _optionRegistry.GenerateOptionsDescription();
             

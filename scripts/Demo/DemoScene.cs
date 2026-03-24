@@ -19,8 +19,9 @@ public partial class DemoScene : Node3D
         _controller = new MultimodalController();
         AddChild(_controller);
         
-        // 配置API密钥（请替换为你的实际API密钥）
-        _controller.SetApiKey("your-api-key-here");
+        // API密钥从 config.json 文件读取，无需在此设置
+        // 如需手动设置，取消注释下行：
+        // _controller.SetApiKey("your-api-key-here");
         
         // 注册示例选项
         RegisterOptions();
@@ -43,7 +44,7 @@ public partial class DemoScene : Node3D
         
         // 创建Control容器
         var control = new Control();
-        control.AnchorsPreset = (int)Control.LayoutPreset.FullRect;
+        control.SetAnchorsPreset(Control.LayoutPreset.FullRect);
         canvas.AddChild(control);
         
         // 状态标签
