@@ -1,0 +1,109 @@
+{
+	"version": 1,
+	"nodes": {
+		"27838408-50dc-4660-ac78-8d8bc57add4b": {
+			"id": "27838408-50dc-4660-ac78-8d8bc57add4b",
+			"shortId": "G1",
+			"type": "goal",
+			"content": "实现Godot多模态AI交互框架：语音输入→大模型识别→选项匹配→函数执行",
+			"status": "done",
+			"parentId": null,
+			"childrenIds": [
+				"c9164e3a-6808-4071-bdd5-8839250775e7"
+			],
+			"codeBindings": [],
+			"createdBy": {
+				"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
+				"timestamp": "2026-03-24T09:28:42.949Z",
+				"action": "created"
+			},
+			"modifiedBy": [
+				{
+					"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
+					"timestamp": "2026-03-24T10:31:14.008Z",
+					"action": "cascade: planned→in_progress (child O1.1 started)"
+				},
+				{
+					"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
+					"timestamp": "2026-03-24T11:35:26.406Z",
+					"action": "cascade: in_progress→done (all children terminated)"
+				},
+				{
+					"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
+					"timestamp": "2026-03-24T11:35:46.645Z",
+					"action": "updated: content, status→done"
+				}
+			],
+			"assumption": "用户需要一个完整的多模态交互系统。核心流程：语音→多模态API→选项匹配→函数执行。尚未确认API选择和语音处理方式。",
+			"maxChildIndex": 1
+		},
+		"c9164e3a-6808-4071-bdd5-8839250775e7": {
+			"id": "c9164e3a-6808-4071-bdd5-8839250775e7",
+			"shortId": "O1.1",
+			"type": "objective",
+			"content": "设计框架架构：语音录制→API调用→结构化输出解析→函数执行",
+			"status": "done",
+			"parentId": "27838408-50dc-4660-ac78-8d8bc57add4b",
+			"childrenIds": [
+				"850e65f2-7f9b-4437-94e7-601dd7855dce"
+			],
+			"codeBindings": [],
+			"createdBy": {
+				"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
+				"timestamp": "2026-03-24T09:40:44.238Z",
+				"action": "created"
+			},
+			"modifiedBy": [
+				{
+					"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
+					"timestamp": "2026-03-24T10:31:14.008Z",
+					"action": "updated: content, status→in_progress"
+				},
+				{
+					"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
+					"timestamp": "2026-03-24T11:35:26.406Z",
+					"action": "cascade: in_progress→done (all children terminated)"
+				},
+				{
+					"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
+					"timestamp": "2026-03-24T11:35:36.545Z",
+					"action": "updated: content, status→done"
+				}
+			],
+			"assumption": "用户已明确技术选型：Qwen3 VL + 结构化输出。框架需要模块化设计，支持选项注册和函数绑定。",
+			"maxChildIndex": 1
+		},
+		"850e65f2-7f9b-4437-94e7-601dd7855dce": {
+			"id": "850e65f2-7f9b-4437-94e7-601dd7855dce",
+			"shortId": "I1.1.1",
+			"type": "impl",
+			"content": "创建框架核心组件和演示场景",
+			"status": "done",
+			"parentId": "c9164e3a-6808-4071-bdd5-8839250775e7",
+			"childrenIds": [],
+			"codeBindings": [],
+			"createdBy": {
+				"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
+				"timestamp": "2026-03-24T10:39:06.442Z",
+				"action": "created"
+			},
+			"modifiedBy": [
+				{
+					"taskId": "019d1f2c-57d7-72cc-8ceb-4f55fe23a715",
+					"timestamp": "2026-03-24T11:35:26.406Z",
+					"action": "updated: content, status→done"
+				}
+			],
+			"assumption": "框架核心组件已完成：IOption接口、OptionRegistry、VoiceRecorder、QwenVLClient、MultimodalController、BaseOption、DemoScene。需要验证编译是否通过。"
+		}
+	},
+	"rootIds": [
+		"27838408-50dc-4660-ac78-8d8bc57add4b"
+	],
+	"shortIdIndex": {
+		"G1": "27838408-50dc-4660-ac78-8d8bc57add4b",
+		"O1.1": "c9164e3a-6808-4071-bdd5-8839250775e7",
+		"I1.1.1": "850e65f2-7f9b-4437-94e7-601dd7855dce"
+	},
+	"rootMaxChildIndex": 1
+}
