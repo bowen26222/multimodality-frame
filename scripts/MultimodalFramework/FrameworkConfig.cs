@@ -80,19 +80,16 @@ namespace MultimodalFramework
     /// </summary>
     public class AsrConfig
     {
-        [JsonPropertyName("useLocal")]
-        public bool UseLocal { get; set; } = true;
+        [JsonPropertyName("useOnline")]
+        public bool UseOnline { get; set; } = true;
         
-        [JsonPropertyName("servicePort")]
-        public int ServicePort { get; set; } = 8765;
+        [JsonPropertyName("endpoint")]
+        public string Endpoint { get; set; } = "https://api.openai.com/v1/audio/transcriptions";
         
-        [JsonPropertyName("serviceHost")]
-        public string ServiceHost { get; set; } = "127.0.0.1";
+        [JsonPropertyName("key")]
+        public string Key { get; set; } = "";
         
-        [JsonPropertyName("modelPath")]
-        public string ModelPath { get; set; } = "";
-        
-        [JsonPropertyName("startupTimeoutMs")]
-        public int StartupTimeoutMs { get; set; } = 60000;
+        [JsonPropertyName("model")]
+        public string Model { get; set; } = "whisper-1";
     }
 }

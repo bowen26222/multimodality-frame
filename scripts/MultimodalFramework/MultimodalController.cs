@@ -36,19 +36,12 @@ namespace MultimodalFramework
         [Export]
         public string ConfigPath { get; set; } = "config.json";
         
-        [Export]
-        public bool UseLocalASR { get; set; } = true; // 使用本地语音转文字
-        
-        [Export]
-        public int EurekaServicePort { get; set; } = 8765;
-        
         private VoiceRecorder _voiceRecorder;
         private QwenVLClient _apiClient;
-        private EurekaServiceManager _eurekaService;
+        private OnlineASRClient _asrClient;
         private OptionRegistry _optionRegistry;
         private bool _isProcessingRequest = false;
         private FrameworkConfig _config;
-        private string _pendingAudioBase64;
         
         public override void _Ready()
         {
@@ -58,29 +51,21 @@ namespace MultimodalFramework
             // 初始化组件
             _optionRegistry = new OptionRegistry();
             
-            // 初始化语音转文字服务
-            if (UseLocalASR || (_config?.Asr?.UseLocal ?? true))
+            // 初始化在线语音转文字服务
+            _asrClient = new OnlineASRClient();
+            if (_config?.Asr != null)
             {
-                _eurekaService = new EurekaServiceManager
-                {
-                    ServicePort = _config?.Asr?.ServicePort ?? EurekaServicePort,
-                    AutoStart = true
-                };
-                
-                // 应用 ASR 配置
-                if (_config?.Asr != null)
-                {
-                    if (!string.IsNullOrEmpty(_config.Asr.ModelPath))
-                    {
-                        _eurekaService.ModelPath = _config.Asr.ModelPath;
-                    }
-                    _eurekaService.StartupTimeoutMs = _config.Asr.StartupTimeoutMs;
-                }
-                
-                AddChild(_eurekaService);
-                _eurekaService.ServiceReady += OnEurekaServiceReady;
-                _eurekaService.ServiceFailed += OnEurekaServiceFailed;
+                GD.Print($"ASR Config: endpoint={_config.Asr.Endpoint}, model={_config.Asr.Model}, key={(_config.Asr.Key?.Length > 0 ? "set" : "null")}");
+                _asrClient.Endpoint = _config.Asr.Endpoint;
+                _asrClient.ApiKey = _config.Asr.Key;
+                _asrClient.Model = _config.Asr.Model;
             }
+            else
+            {
+                GD.PrintErr("ASR config is null, using defaults");
+            }
+            AddChild(_asrClient);
+            _asrClient.TranscriptionCompleted += OnTranscriptionCompleted;
             
             _voiceRecorder = new VoiceRecorder();
             AddChild(_voiceRecorder);
@@ -96,12 +81,10 @@ namespace MultimodalFramework
             
             if (AutoStartRecording || (_config?.Recording.AutoStart ?? false))
             {
-                // 等待服务就绪后再开始录制
-                if (UseLocalASR && (_eurekaService?.IsServiceReady ?? false))
-                {
-                    StartListening();
-                }
+                StartListening();
             }
+            
+            EmitSignal(SignalName.ServiceStatusChanged, true);
         }
         
         /// <summary>
@@ -146,58 +129,42 @@ namespace MultimodalFramework
         }
         
         /// <summary>
-        /// 开始语音录制
+        /// 开始监听（开始录制）
         /// </summary>
         public void StartListening()
         {
             if (_isProcessingRequest)
             {
-                GD.PrintErr("Already processing a request");
+                GD.Print("Cannot start recording while processing request");
                 return;
             }
             
             _voiceRecorder.StartRecording();
+            GD.Print("Started listening...");
         }
         
         /// <summary>
-        /// 停止语音录制并处理
+        /// 停止监听（停止录制并处理）
         /// </summary>
         public void StopListening()
         {
             _voiceRecorder.StopRecording();
+            GD.Print("Stopped listening");
         }
         
         /// <summary>
-        /// 取消当前录制
+        /// 切换监听状态
         /// </summary>
-        public void CancelListening()
+        public void ToggleListening()
         {
-            _voiceRecorder.CancelRecording();
-        }
-        
-        /// <summary>
-        /// Eureka 服务就绪回调
-        /// </summary>
-        private void OnEurekaServiceReady()
-        {
-            GD.Print("Eureka ASR service is ready");
-            EmitSignal(SignalName.ServiceStatusChanged, true);
-            
-            // 如果配置了自动开始录制，现在开始
-            if (AutoStartRecording || (_config?.Recording.AutoStart ?? false))
+            if (_voiceRecorder.IsRecording)
+            {
+                StopListening();
+            }
+            else
             {
                 StartListening();
             }
-        }
-        
-        /// <summary>
-        /// Eureka 服务失败回调
-        /// </summary>
-        private void OnEurekaServiceFailed(string error)
-        {
-            GD.PrintErr($"Eureka ASR service failed: {error}");
-            EmitSignal(SignalName.ServiceStatusChanged, false);
-            EmitSignal(SignalName.Error, $"ASR service failed: {error}");
         }
         
         /// <summary>
@@ -206,49 +173,31 @@ namespace MultimodalFramework
         private void OnRecordingCompleted(string audioBase64)
         {
             _isProcessingRequest = true;
+            GD.Print("Recording completed, sending to ASR service...");
             
-            if (UseLocalASR && _eurekaService != null && _eurekaService.IsServiceReady)
-            {
-                // 使用本地 ASR 服务转写
-                _pendingAudioBase64 = audioBase64;
-                TranscribeAudioAsync(audioBase64);
-            }
-            else
-            {
-                // 直接发送音频给大模型（旧方式，可能不支持）
-                GD.Print("Local ASR not available, sending audio directly to API");
-                _apiClient.SendVoiceForMatching(audioBase64, "wav");
-            }
+            // 使用在线 ASR 服务转写 (VoiceRecorder 保存为 WAV 格式)
+            _asrClient.TranscribeBase64(audioBase64, "wav");
         }
         
         /// <summary>
-        /// 异步转写音频
+        /// ASR 转写完成回调
         /// </summary>
-        private async void TranscribeAudioAsync(string audioBase64)
+        private void OnTranscriptionCompleted(string text, bool success, string error)
         {
-            try
+            if (success && !string.IsNullOrEmpty(text))
             {
-                var result = await _eurekaService.TranscribeBase64(audioBase64, "wav");
+                GD.Print($"Transcription: {text}");
+                EmitSignal(SignalName.TranscriptionCompleted, text);
                 
-                if (result.Success)
-                {
-                    string transcribedText = result.Text;
-                    GD.Print($"Transcription: {transcribedText}");
-                    EmitSignal(SignalName.TranscriptionCompleted, transcribedText);
-                    
-                    // 发送转写后的文字给大模型进行选项匹配
-                    _apiClient.SendTextForMatching(transcribedText);
-                }
-                else
-                {
-                    _isProcessingRequest = false;
-                    EmitSignal(SignalName.Error, $"Transcription failed: {result.Error}");
-                }
+                // 发送转写后的文字给大模型进行选项匹配
+                _apiClient.SendTextForMatching(text);
             }
-            catch (Exception ex)
+            else
             {
                 _isProcessingRequest = false;
-                EmitSignal(SignalName.Error, $"Transcription error: {ex.Message}");
+                string errorMsg = string.IsNullOrEmpty(error) ? "Unknown ASR error" : error;
+                GD.PrintErr($"ASR failed: {errorMsg}");
+                EmitSignal(SignalName.Error, $"Transcription failed: {errorMsg}");
             }
         }
         
@@ -340,8 +289,8 @@ namespace MultimodalFramework
         public bool IsRecording => _voiceRecorder?.IsRecording ?? false;
         
         /// <summary>
-        /// ASR 服务是否就绪
+        /// ASR 服务是否就绪（在线服务始终就绪）
         /// </summary>
-        public bool IsASRReady => _eurekaService?.IsServiceReady ?? false;
+        public bool IsASRReady => true;
     }
 }

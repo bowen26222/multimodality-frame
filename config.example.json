@@ -1,8 +1,8 @@
 {
   "api": {
-    "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+    "endpoint": "https://api.siliconflow.cn/v1/chat/completions",
     "key": "your-api-key-here",
-    "model": "qwen-vl-max",
+    "model": "Qwen/Qwen2.5-7B-Instruct",
     "temperature": 0.1,
     "maxTokens": 1024
   },
@@ -10,10 +10,9 @@
     "autoStart": false
   },
   "asr": {
-    "useLocal": true,
-    "servicePort": 8765,
-    "serviceHost": "127.0.0.1",
-    "modelPath": "",
-    "startupTimeoutMs": 60000
+    "useOnline": true,
+    "endpoint": "https://api.siliconflow.cn/v1/audio/transcriptions",
+    "key": "your-asr-api-key-here",
+    "model": "FunAudioLLM/SenseVoiceSmall"
   }
 }

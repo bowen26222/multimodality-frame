@@ -1,11 +1,11 @@
 # 多模态AI交互框架
 
-一个基于Godot 4的多模态AI交互框架，支持语音输入、本地语音转文字、多模态模型识别和选项匹配执行。
+一个基于Godot 4的多模态AI交互框架，支持语音输入、在线语音转文字、多模态模型识别和选项匹配执行。
 
 ## 功能特性
 
 - 🎤 **语音录制**：使用Godot内置的AudioEffectRecord进行语音录制
-- 🗣️ **本地语音转文字**：集成 Eureka-Audio 开源模型，支持本地离线语音识别
+- 🗣️ **在线语音转文字**：支持 OpenAI 兼容的 ASR API（如 Whisper）
 - 🤖 **多模态识别**：支持 Qwen、Minimax 等大模型进行意图识别
 - 🎯 **选项匹配**：通过结构化输出实现精准的意图识别和选项匹配
 - ⚡ **函数执行**：匹配成功后自动执行绑定的函数
@@ -14,7 +14,7 @@
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  VoiceRecorder  │────▶│ EurekaService   │────▶│  QwenVLClient   │
+│  VoiceRecorder  │────▶│  OnlineASRClient│────▶│  QwenVLClient   │
 │   (语音录制)     │     │  (语音转文字)    │     │   (意图识别)     │
 └─────────────────┘     └─────────────────┘     └─────────────────┘
          │                      │                       │
@@ -28,25 +28,9 @@
 
 ## 快速开始
 
-### 1. 安装依赖
+### 1. 配置文件
 
-#### Python 环境（用于 Eureka-Audio 服务）
-
-```bash
-# 安装 Eureka-Audio 服务依赖
-cd eureka_service
-pip install -r requirements.txt
-
-# 下载模型（首次运行会自动下载）
-# 模型大小约 3.5GB，需要耐心等待
-```
-
-#### Godot 项目配置
-
-1. 复制 `config.example.json` 为 `config.json`
-2. 填写你的 API 密钥
-
-### 2. 配置文件
+复制 `config.example.json` 为 `config.json`，并填写你的 API 密钥：
 
 ```json
 {
@@ -61,16 +45,26 @@ pip install -r requirements.txt
     "autoStart": false
   },
   "asr": {
-    "useLocal": true,
-    "servicePort": 8765,
-    "serviceHost": "127.0.0.1",
-    "modelPath": "",
-    "startupTimeoutMs": 60000
+    "useOnline": true,
+    "endpoint": "https://api.ppio.com/openai/v1/audio/transcriptions",
+    "key": "your-asr-api-key-here",
+    "model": "openai/whisper-large-v3"
   }
 }
 ```
 
-### 3. 注册选项
+### 配置说明
+
+| 字段 | 说明 |
+|------|------|
+| `api.endpoint` | 大模型 API 端点 |
+| `api.key` | 大模型 API 密钥 |
+| `api.model` | 使用的模型名称 |
+| `asr.endpoint` | 语音转文字 API 端点（OpenAI 兼容格式） |
+| `asr.key` | ASR API 密钥（可与主 API 使用相同密钥） |
+| `asr.model` | ASR 模型名称（如 whisper-1, openai/whisper-large-v3） |
+
+### 2. 注册选项
 
 使用`OptionBuilder`创建并注册选项：
 
@@ -89,7 +83,7 @@ registry.Register(new OptionBuilder()
     .Build());
 ```
 
-### 4. 开始语音识别
+### 3. 开始语音识别
 
 ```csharp
 // 开始录音
@@ -99,7 +93,7 @@ _controller.StartListening();
 _controller.StopListening();
 ```
 
-### 5. 处理结果
+### 4. 处理结果
 
 连接信号处理匹配结果：
 
@@ -131,13 +125,13 @@ _controller.ServiceStatusChanged += (isReady) =>
 
 ## 核心组件
 
-### EurekaServiceManager
+### OnlineASRClient
 
-本地语音转文字服务管理器：
+在线语音转文字客户端：
 
-- 游戏启动时自动部署 Eureka-Audio 服务
-- 提供 HTTP API 供 Godot 调用
-- 支持文件和 Base64 编码的音频输入
+- 支持 OpenAI 兼容的 ASR API
+- 支持 Base64 编码和文件路径输入
+- 信号：`TranscriptionCompleted`
 
 ### IOption 接口
 
@@ -176,7 +170,6 @@ public interface IOption
 大模型 API 客户端：
 
 - `SendTextForMatching(string text)` - 发送文本进行匹配
-- `SendVoiceForMatching(string audioBase64, string format)` - 发送语音（旧方式）
 - 信号：`ResponseReceived`, `RequestFailed`
 
 ### MultimodalController
@@ -186,36 +179,8 @@ public interface IOption
 - `StartListening()` - 开始语音录制
 - `StopListening()` - 停止录制并处理
 - `GetOptionRegistry()` - 获取选项注册中心
-- `IsASRReady` - ASR 服务是否就绪
+- `IsASRReady` - ASR 服务是否就绪（在线服务始终为 true）
 - 信号：`TranscriptionCompleted`, `OptionMatched`, `OptionExecuted`, `NoMatch`, `Error`, `ServiceStatusChanged`
-
-## Eureka-Audio 服务
-
-### 手动启动服务
-
-```bash
-# Windows
-eureka_service\start_service.bat
-
-# Linux/macOS
-./eureka_service/start_service.sh
-```
-
-### API 接口
-
-服务启动后提供以下接口：
-
-- `GET /health` - 健康检查
-- `POST /transcribe` - 上传音频文件转写
-- `POST /transcribe_base64` - Base64 编码音频转写
-
-### 模型下载
-
-首次运行时，模型会自动从 HuggingFace 下载：
-
-- 模型：`cslys1999/Eureka-Audio-Instruct`
-- 大小：约 3.5GB
-- 国内用户可使用 ModelScope 镜像：`lys1999/Eureka-Audio-Instruct`
 
 ## 自定义选项
 
@@ -282,15 +247,11 @@ AI返回的JSON格式：
 2. API密钥请妥善保管，不要提交到版本控制
 3. 录制时长默认最大30秒，可通过`RecordingMaxDuration`调整
 4. 匹配置信度阈值默认0.7，可在提示词中调整
-5. Eureka-Audio 模型首次加载需要较长时间，请耐心等待
-6. 建议使用 GPU 运行 Eureka-Audio 以获得更好的性能
 
 ## 系统要求
 
 - Godot 4.x
-- Python 3.8+（用于 Eureka-Audio 服务）
-- CUDA 11.x+（推荐，用于 GPU 加速）
-- 内存：至少 8GB（模型加载需要约 4GB）
+- .NET 6.0+
 
 ## 许可证
 
