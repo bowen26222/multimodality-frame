@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="StoryNode" format=3 uid="uid://bll0h7kyypot7"]
+
+[ext_resource type="Script" uid="uid://dbftvqbd867ku" path="res://scripts/Dialog/StoryNode.cs" id="1_4il70"]
+
+[resource]
+script = ExtResource("1_4il70")
+Contents = Array[String](["", ""])
+metadata/_custom_type_script = "uid://dbftvqbd867ku"

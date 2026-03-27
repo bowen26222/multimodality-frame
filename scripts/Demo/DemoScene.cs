@@ -36,7 +36,7 @@ public partial class DemoScene : Node3D
         GD.Print("Multimodal Framework Demo Ready");
         GD.Print("Press SPACE to start/stop recording");
         var dialogue = GD.Load<Resource>("res://dialogs/introduce.dialogue");
-        DialogueManager.ShowExampleDialogueBalloon(dialogue, "start");
+        DialogueManager.ShowDialogueBalloon(dialogue, "start");
     }
     
     private void SetupUI()
@@ -76,7 +76,6 @@ public partial class DemoScene : Node3D
         registry.Register(new OptionBuilder()
             .WithId("move_forward")
             .WithDescription("让角色向前移动")
-            .WithKeywords("前进", "向前", "走", "移动")
             .WithAction(parameters => 
             {
                 GD.Print("执行：向前移动");
@@ -88,7 +87,6 @@ public partial class DemoScene : Node3D
         registry.Register(new OptionBuilder()
             .WithId("attack")
             .WithDescription("让角色进行攻击")
-            .WithKeywords("攻击", "打", "战斗", "进攻")
             .WithAction(parameters =>
             {
                 GD.Print("执行：攻击");
@@ -100,7 +98,6 @@ public partial class DemoScene : Node3D
         registry.Register(new OptionBuilder()
             .WithId("jump")
             .WithDescription("让角色跳跃")
-            .WithKeywords("跳", "跳跃", "起跳")
             .WithAction(parameters =>
             {
                 float height = 1.0f;
@@ -119,7 +116,6 @@ public partial class DemoScene : Node3D
         registry.Register(new OptionBuilder()
             .WithId("open_menu")
             .WithDescription("打开游戏菜单")
-            .WithKeywords("菜单", "设置", "选项", "暂停")
             .WithAction(() =>
             {
                 GD.Print("执行：打开菜单");
@@ -130,7 +126,6 @@ public partial class DemoScene : Node3D
         registry.Register(new OptionBuilder()
             .WithId("use_item")
             .WithDescription("使用指定的物品")
-            .WithKeywords("使用", "物品", "道具", "装备")
             .WithAction(parameters =>
             {
                 string itemName = "未知物品";

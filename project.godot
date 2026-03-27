@@ -27,6 +27,7 @@ driver/enable_input=true
 [autoload]
 
 DialogueManager="*uid://c3rodes2l3gxb"
+StoryManager="*uid://bua0rr07aos30"
 
 [dialogue_manager]
 

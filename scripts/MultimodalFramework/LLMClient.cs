@@ -74,29 +74,6 @@ namespace MultimodalFramework
         }
         
         /// <summary>
-        /// 发送语音进行识别和匹配（旧方式，可能不被所有模型支持）
-        /// </summary>
-        /// <param name="audioBase64">Base64编码的音频数据</param>
-        /// <param name="audioFormat">音频格式（wav, mp3等）</param>
-        public void SendVoiceForMatching(string audioBase64, string audioFormat = "wav")
-        {
-            if (string.IsNullOrEmpty(ApiKey))
-            {
-                EmitSignal(SignalName.RequestFailed, "API Key not configured");
-                return;
-            }
-            
-            if (_optionRegistry == null)
-            {
-                EmitSignal(SignalName.RequestFailed, "Option registry not set");
-                return;
-            }
-            
-            var requestBody = BuildAudioRequestBody(audioBase64, audioFormat);
-            SendRequest(requestBody);
-        }
-        
-        /// <summary>
         /// 构建文本请求体
         /// </summary>
         private string BuildTextRequestBody(string text)
@@ -107,10 +84,9 @@ namespace MultimodalFramework
 
 {optionsDescription}
 
-请严格按照以下JSON格式输出：
+如果匹配到任何选项，请严格按照以下JSON格式输出：
 {{
-    ""parameters"": {{}} // 从用户输入中提取的参数
-    ""confidence"": 0.0-1.0的置信度,
+    ""confidence"": 0.00-1.00的置信度,
     ""matched"": true/false,
     ""option_id"": ""选项ID（如果匹配到）"",
 }}
@@ -124,8 +100,7 @@ namespace MultimodalFramework
 
 注意：
 1. 只有当置信度超过0.7时才认为匹配成功
-2. 参数字段应包含执行选项所需的任何额外信息
-3. 必须严格按照JSON格式输出，不要包含其他文字";
+2. 必须严格按照JSON格式输出，不要包含其他文字";
 
             var request = new
             {
@@ -141,76 +116,6 @@ namespace MultimodalFramework
                     {
                         ["role"] = "user",
                         ["content"] = text
-                    }
-                },
-                temperature = Temperature,
-                max_tokens = MaxTokens,
-                response_format = new Dictionary<string, string> { ["type"] = "json_object" }
-            };
-            
-            return JsonSerializer.Serialize(request);
-        }
-        
-        /// <summary>
-        /// 构建音频请求体（旧方式）
-        /// </summary>
-        private string BuildAudioRequestBody(string audioBase64, string audioFormat)
-        {
-            var optionsDescription = _optionRegistry.GenerateOptionsDescription();
-            
-            var systemPrompt = $@"你是一个多模态交互助手。你的任务是分析用户的输入，并从可用选项中选择最匹配的一个。
-
-{optionsDescription}
-
-请严格按照以下JSON格式输出：
-{{
-    ""matched"": true/false,
-    ""option_id"": ""选项ID（如果匹配到）"",
-    ""confidence"": 0.0-1.0的置信度,
-    ""parameters"": {{}} // 从用户输入中提取的参数
-}}
-
-如果没有匹配到任何选项，请输出：
-{{
-    ""matched"": false,
-    ""reason"": ""未匹配的原因"",
-    ""user_intent"": ""用户可能的意图描述""
-}}
-
-注意：
-1. 只有当置信度超过0.7时才认为匹配成功
-2. 参数字段应包含执行选项所需的任何额外信息
-3. 必须严格按照JSON格式输出，不要包含其他文字";
-
-            // 构建消息内容
-            var contentArray = new List<object>
-            {
-                new
-                {
-                    type = "audio",
-                    audio = $"data:audio/{audioFormat};base64,{audioBase64}"
-                },
-                new
-                {
-                    type = "text",
-                    text = "请分析这段语音并匹配最合适的选项"
-                }
-            };
-            
-            var request = new
-            {
-                model = ModelName,
-                messages = new object[]
-                {
-                    new Dictionary<string, object>
-                    {
-                        ["role"] = "system",
-                        ["content"] = systemPrompt
-                    },
-                    new Dictionary<string, object>
-                    {
-                        ["role"] = "user",
-                        ["content"] = contentArray
                     }
                 },
                 temperature = Temperature,

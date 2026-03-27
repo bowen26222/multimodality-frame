@@ -51,6 +51,47 @@
       "gitCommit": "9c5226e6c9959aed6c4402e76e665bc967bb23ae",
       "ttlHours": 168,
       "schema": "{\"type\": \"object\", \"properties\": {\"files\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}}"
+    },
+    {
+      "id": "3",
+      "query": "Where is baseOption defined? What is the structure of the keyword list in baseOption?",
+      "tags": [
+        "where",
+        "is",
+        "baseoption",
+        "defined",
+        "what",
+        "the",
+        "structure",
+        "of",
+        "keyword",
+        "list",
+        "in"
+      ],
+      "createdAt": "2026-03-27T13:05:33.751Z",
+      "gitCommit": "d92706c02b734ea59302fbbb61f7f525cbc6967d",
+      "ttlHours": 168,
+      "schema": "{\"type\": \"object\", \"properties\": {\"files\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"path\": {\"type\": \"string\"}, \"description\": {\"type\": \"string\"}}}}}}"
+    },
+    {
+      "id": "4",
+      "query": "Where is debug_recording.wav generated or used in the codebase?",
+      "tags": [
+        "where",
+        "is",
+        "debug_recording",
+        "wav",
+        "generated",
+        "or",
+        "used",
+        "in",
+        "the",
+        "codebase"
+      ],
+      "createdAt": "2026-03-27T14:35:42.633Z",
+      "gitCommit": "d92706c02b734ea59302fbbb61f7f525cbc6967d",
+      "ttlHours": 168,
+      "schema": "{\"type\": \"object\", \"properties\": {\"files\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"path\": {\"type\": \"string\"}, \"line\": {\"type\": \"number\"}, \"description\": {\"type\": \"string\"}}}}}}"
     }
   ]
 }

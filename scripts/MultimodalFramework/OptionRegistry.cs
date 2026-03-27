@@ -61,10 +61,6 @@ namespace MultimodalFramework
                 var option = kvp.Value;
                 sb.AppendLine($"- ID: {option.Id}");
                 sb.AppendLine($"  描述: {option.Description}");
-                if (option.Keywords != null && option.Keywords.Length > 0)
-                {
-                    sb.AppendLine($"  关键词: {string.Join(", ", option.Keywords)}");
-                }
                 sb.AppendLine();
             }
             

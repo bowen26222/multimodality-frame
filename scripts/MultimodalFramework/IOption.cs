@@ -18,11 +18,6 @@ namespace MultimodalFramework
         string Description { get; }
         
         /// <summary>
-        /// 选项的关键词列表，辅助匹配
-        /// </summary>
-        string[] Keywords { get; }
-        
-        /// <summary>
         /// 当选项被匹配时执行的函数
         /// </summary>
         /// <param name="parameters">从AI响应中提取的参数</param>

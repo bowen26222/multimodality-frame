@@ -10,7 +10,6 @@ namespace MultimodalFramework
     {
         private readonly string _id;
         private readonly string _description;
-        private readonly string[] _keywords;
         private readonly Action<JsonElement> _executeAction;
         
         /// <summary>
@@ -18,19 +17,16 @@ namespace MultimodalFramework
         /// </summary>
         /// <param name="id">选项ID</param>
         /// <param name="description">选项描述</param>
-        /// <param name="keywords">关键词列表</param>
         /// <param name="executeAction">执行函数</param>
-        public BaseOption(string id, string description, string[] keywords, Action<JsonElement> executeAction)
+        public BaseOption(string id, string description, Action<JsonElement> executeAction)
         {
             _id = id;
             _description = description;
-            _keywords = keywords ?? Array.Empty<string>();
             _executeAction = executeAction;
         }
         
         public string Id => _id;
         public string Description => _description;
-        public string[] Keywords => _keywords;
         
         public void Execute(JsonElement parameters)
         {
@@ -45,7 +41,6 @@ namespace MultimodalFramework
     {
         private string _id;
         private string _description;
-        private string[] _keywords;
         private Action<JsonElement> _executeAction;
         
         /// <summary>
@@ -63,15 +58,6 @@ namespace MultimodalFramework
         public OptionBuilder WithDescription(string description)
         {
             _description = description;
-            return this;
-        }
-        
-        /// <summary>
-        /// 设置关键词
-        /// </summary>
-        public OptionBuilder WithKeywords(params string[] keywords)
-        {
-            _keywords = keywords;
             return this;
         }
         
@@ -103,7 +89,7 @@ namespace MultimodalFramework
                 throw new InvalidOperationException("Option ID is required");
             }
             
-            return new BaseOption(_id, _description ?? "", _keywords, _executeAction);
+            return new BaseOption(_id, _description ?? "", _executeAction);
         }
     }
 }

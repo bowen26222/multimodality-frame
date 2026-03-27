@@ -23,16 +23,12 @@ namespace MultimodalFramework
         private bool _isRecording = false;
         private float _recordingTime = 0f;
         private string _tempFilePath;
-        private string _debugFilePath;  // 调试用：保存到项目目录
         private int _recordBusIndex = -1;
         
         public override void _Ready()
         {
             // 创建临时文件路径 - 保存到项目目录方便调试
             _tempFilePath = "user://voice_recording.wav";
-            
-            // 同时保存一份到项目根目录（仅调试用）
-            _debugFilePath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "debug_recording.wav");
             
             // 获取或创建录音总线
             _recordBusIndex = AudioServer.GetBusIndex("Record");
@@ -128,17 +124,6 @@ namespace MultimodalFramework
                 var base64 = Convert.ToBase64String(audioData);
                 
                 GD.Print($"Voice recording completed, size: {audioData.Length} bytes");
-                
-                // 保存调试副本到项目目录
-                try
-                {
-                    File.Copy(globalPath, _debugFilePath, true);
-                    GD.Print($"Debug recording saved to: {_debugFilePath}");
-                }
-                catch (Exception debugEx)
-                {
-                    GD.PrintErr($"Failed to save debug file: {debugEx.Message}");
-                }
                 
                 EmitSignal(SignalName.RecordingCompleted, base64);
             }
