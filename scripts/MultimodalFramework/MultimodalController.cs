@@ -37,7 +37,7 @@ namespace MultimodalFramework
         public string ConfigPath { get; set; } = "config.json";
         
         private VoiceRecorder _voiceRecorder;
-        private QwenVLClient _apiClient;
+        private LLMClient _apiClient;
         private OnlineASRClient _asrClient;
         private OptionRegistry _optionRegistry;
         private bool _isProcessingRequest = false;
@@ -72,7 +72,7 @@ namespace MultimodalFramework
             _voiceRecorder.RecordingCompleted += OnRecordingCompleted;
             _voiceRecorder.RecordingFailed += OnRecordingFailed;
             
-            _apiClient = new QwenVLClient();
+            _apiClient = new LLMClient();
             ApplyConfigToClient();
             AddChild(_apiClient);
             _apiClient.SetOptionRegistry(_optionRegistry);

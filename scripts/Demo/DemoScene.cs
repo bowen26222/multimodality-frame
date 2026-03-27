@@ -1,5 +1,6 @@
 using Godot;
 using MultimodalFramework;
+using DialogueManagerRuntime;
 
 /// <summary>
 /// 演示场景：展示如何使用多模态交互框架
@@ -34,6 +35,8 @@ public partial class DemoScene : Node3D
         
         GD.Print("Multimodal Framework Demo Ready");
         GD.Print("Press SPACE to start/stop recording");
+        var dialogue = GD.Load<Resource>("res://dialogs/introduce.dialogue");
+        DialogueManager.ShowExampleDialogueBalloon(dialogue, "start");
     }
     
     private void SetupUI()

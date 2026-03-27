@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace MultimodalFramework
 {
     /// <summary>
     /// 大模型 API 客户端，支持文本输入和结构化输出
     /// </summary>
-    public partial class QwenVLClient : Node
+    public partial class LLMClient : Node
     {
         [Signal]
         public delegate void ResponseReceivedEventHandler(string optionId, float confidence, string parametersJson, bool matched, string reason, string userIntent);
@@ -108,17 +109,17 @@ namespace MultimodalFramework
 
 请严格按照以下JSON格式输出：
 {{
+    ""parameters"": {{}} // 从用户输入中提取的参数
+    ""confidence"": 0.0-1.0的置信度,
     ""matched"": true/false,
     ""option_id"": ""选项ID（如果匹配到）"",
-    ""confidence"": 0.0-1.0的置信度,
-    ""parameters"": {{}} // 从用户输入中提取的参数
 }}
 
 如果没有匹配到任何选项，请输出：
 {{
-    ""matched"": false,
-    ""reason"": ""未匹配的原因"",
     ""user_intent"": ""用户可能的意图描述""
+    ""reason"": ""未匹配的原因"",
+    ""matched"": false,
 }}
 
 注意：
@@ -157,7 +158,7 @@ namespace MultimodalFramework
         {
             var optionsDescription = _optionRegistry.GenerateOptionsDescription();
             
-            var systemPrompt = $@"你是一个多模态交互助手。你的任务是分析用户的语音输入，并从可用选项中选择最匹配的一个。
+            var systemPrompt = $@"你是一个多模态交互助手。你的任务是分析用户的输入，并从可用选项中选择最匹配的一个。
 
 {optionsDescription}
 
@@ -259,12 +260,73 @@ namespace MultimodalFramework
             try
             {
                 var responseText = Encoding.UTF8.GetString(body);
+                GD.Print($"API Response: {responseText}");
                 ParseAndEmitResponse(responseText);
             }
             catch (Exception ex)
             {
+                GD.PrintErr($"Failed to parse response: {ex.Message}");
                 EmitSignal(SignalName.RequestFailed, $"Failed to parse response: {ex.Message}");
             }
+        }
+        
+        /// <summary>
+        /// 清理 Markdown 代码块格式，提取纯 JSON 内容
+        /// </summary>
+        /// <param name="content">可能包含 Markdown 代码块的内容</param>
+        /// <returns>清理后的 JSON 字符串</returns>
+        private string StripMarkdownCodeBlock(string content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+                return content;
+            
+            var trimmed = content.Trim();
+            
+            // 检查是否以 ``` 开头（Markdown 代码块）
+            if (trimmed.StartsWith("```"))
+            {
+                // 使用正则表达式匹配代码块
+                // 支持 ```json ... ``` 或 ``` ... ``` 格式
+                var match = Regex.Match(trimmed, @"^```(?:json)?\s*\n?([\s\S]*?)\n?```$", RegexOptions.Multiline);
+                if (match.Success)
+                {
+                    return match.Groups[1].Value.Trim();
+                }
+                
+                // 如果正则没匹配到，尝试简单的字符串处理
+                var lines = trimmed.Split('\n');
+                var jsonLines = new List<string>();
+                bool inCodeBlock = false;
+                
+                foreach (var line in lines)
+                {
+                    var trimmedLine = line.Trim();
+                    if (trimmedLine.StartsWith("```"))
+                    {
+                        if (!inCodeBlock)
+                        {
+                            inCodeBlock = true;
+                            continue;
+                        }
+                        else
+                        {
+                            break; // 结束代码块
+                        }
+                    }
+                    
+                    if (inCodeBlock)
+                    {
+                        jsonLines.Add(line);
+                    }
+                }
+                
+                if (jsonLines.Count > 0)
+                {
+                    return string.Join("\n", jsonLines).Trim();
+                }
+            }
+            
+            return content.Trim();
         }
         
         /// <summary>
@@ -281,6 +343,11 @@ namespace MultimodalFramework
                 .GetProperty("message")
                 .GetProperty("content")
                 .GetString();
+            
+            // 清理可能的 Markdown 代码块格式
+            content = StripMarkdownCodeBlock(content);
+            
+            GD.Print($"Parsed content: {content}");
             
             // 解析结构化输出
             var resultJson = JsonDocument.Parse(content);

@@ -16,6 +16,41 @@
       "gitCommit": "428272f8c2e9e4bff6752657dcc608c192098915",
       "ttlHours": 168,
       "schema": "{\"type\": \"object\", \"properties\": {\"answer\": {\"type\": \"string\"}}}"
+    },
+    {
+      "id": "2",
+      "query": "Where is the API request code that parses JSON responses? Looking for HTTP client code, fetch calls, or response parsing logic.",
+      "tags": [
+        "where",
+        "is",
+        "the",
+        "api",
+        "request",
+        "code",
+        "that",
+        "parses",
+        "json",
+        "responses",
+        "looking",
+        "for",
+        "http",
+        "client",
+        "fetch",
+        "calls",
+        "or",
+        "response",
+        "parsing",
+        "logic"
+      ],
+      "scope": {
+        "directories": "/workspace",
+        "file_patterns": "*.ts,*.js,*.cs,*.py,*.gd",
+        "excludes": "node_modules,.godot,dist,build"
+      },
+      "createdAt": "2026-03-27T11:14:19.709Z",
+      "gitCommit": "9c5226e6c9959aed6c4402e76e665bc967bb23ae",
+      "ttlHours": 168,
+      "schema": "{\"type\": \"object\", \"properties\": {\"files\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}}"
     }
   ]
 }
