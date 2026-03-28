@@ -4,5 +4,5 @@
 
 [resource]
 script = ExtResource("1_4il70")
-Contents = Array[String](["", ""])
+Choices = Array[Object]([null])
 metadata/_custom_type_script = "uid://dbftvqbd867ku"

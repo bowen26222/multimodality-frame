@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "D:\\godotProject\\multimodality-frame\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{E0BF8A54-B994-4A2E-9ED5-5D0CE46333C4}|Multimodality Frame.csproj|d:\\godotproject\\multimodality-frame\\scripts\\dialog\\storymanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0BF8A54-B994-4A2E-9ED5-5D0CE46333C4}|Multimodality Frame.csproj|solutionrelative:scripts\\dialog\\storymanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E0BF8A54-B994-4A2E-9ED5-5D0CE46333C4}|Multimodality Frame.csproj|d:\\godotproject\\multimodality-frame\\scripts\\multimodalframework\\baseoption.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0BF8A54-B994-4A2E-9ED5-5D0CE46333C4}|Multimodality Frame.csproj|solutionrelative:scripts\\multimodalframework\\baseoption.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E0BF8A54-B994-4A2E-9ED5-5D0CE46333C4}|Multimodality Frame.csproj|d:\\godotproject\\multimodality-frame\\addons\\dialogue_manager\\dialoguemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0BF8A54-B994-4A2E-9ED5-5D0CE46333C4}|Multimodality Frame.csproj|solutionrelative:addons\\dialogue_manager\\dialoguemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{E0BF8A54-B994-4A2E-9ED5-5D0CE46333C4}|Multimodality Frame.csproj|d:\\godotproject\\multimodality-frame\\scripts\\demo\\demoscene.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E0BF8A54-B994-4A2E-9ED5-5D0CE46333C4}|Multimodality Frame.csproj|solutionrelative:scripts\\demo\\demoscene.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -19,6 +31,44 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "StoryManager.cs",
+              "DocumentMoniker": "D:\\godotProject\\multimodality-frame\\scripts\\Dialog\\StoryManager.cs",
+              "RelativeDocumentMoniker": "scripts\\Dialog\\StoryManager.cs",
+              "ToolTip": "D:\\godotProject\\multimodality-frame\\scripts\\Dialog\\StoryManager.cs",
+              "RelativeToolTip": "scripts\\Dialog\\StoryManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-28T08:46:38.38Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BaseOption.cs",
+              "DocumentMoniker": "D:\\godotProject\\multimodality-frame\\scripts\\MultimodalFramework\\BaseOption.cs",
+              "RelativeDocumentMoniker": "scripts\\MultimodalFramework\\BaseOption.cs",
+              "ToolTip": "D:\\godotProject\\multimodality-frame\\scripts\\MultimodalFramework\\BaseOption.cs",
+              "RelativeToolTip": "scripts\\MultimodalFramework\\BaseOption.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-28T08:42:54.399Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "DialogueManager.cs",
+              "DocumentMoniker": "D:\\godotProject\\multimodality-frame\\addons\\dialogue_manager\\DialogueManager.cs",
+              "RelativeDocumentMoniker": "addons\\dialogue_manager\\DialogueManager.cs",
+              "ToolTip": "D:\\godotProject\\multimodality-frame\\addons\\dialogue_manager\\DialogueManager.cs",
+              "RelativeToolTip": "addons\\dialogue_manager\\DialogueManager.cs",
+              "ViewState": "AgIAAGEBAAAAAAAAAAAiwHkBAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-28T08:35:53.22Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "DemoScene.cs",
               "DocumentMoniker": "D:\\godotProject\\multimodality-frame\\scripts\\Demo\\DemoScene.cs",
               "RelativeDocumentMoniker": "scripts\\Demo\\DemoScene.cs",
@@ -26,8 +76,7 @@
               "RelativeToolTip": "scripts\\Demo\\DemoScene.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T14:57:48.017Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-24T14:57:48.017Z"
             }
           ]
         }

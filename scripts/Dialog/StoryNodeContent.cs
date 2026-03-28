@@ -9,12 +9,9 @@ namespace TreeStory;
 /// <summary>
 /// 故事节点内容 - 作为 Resource 可在编辑器中编辑
 /// </summary>
-
-
 [GlobalClass]
-public partial class StoryNode : Resource
+public partial class StoryNodeContent : Resource
 {
-    [Export] public string NodeId;
-    [Export] public string DialogPath;
-    [Export] public Array<StoryNodeContent> Choices;
+    [Export] public string ForwardNodeId;
+    [Export] public string Content;
 }
