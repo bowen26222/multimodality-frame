@@ -92,6 +92,43 @@
       "gitCommit": "d92706c02b734ea59302fbbb61f7f525cbc6967d",
       "ttlHours": 168,
       "schema": "{\"type\": \"object\", \"properties\": {\"files\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"path\": {\"type\": \"string\"}, \"line\": {\"type\": \"number\"}, \"description\": {\"type\": \"string\"}}}}}}"
+    },
+    {
+      "id": "5",
+      "query": "项目的整体结构是怎样的？有哪些主要的目录和文件？是否有现有的UI或相机相关代码？",
+      "tags": [
+        "项目的整体结构是怎样的",
+        "有哪些主要的目录和文件",
+        "是否有现有的ui或相机相关代码"
+      ],
+      "scope": {
+        "directories": ".",
+        "file_patterns": "*.gd,*.tscn,*.cs",
+        "excludes": ".godot,android"
+      },
+      "createdAt": "2026-03-28T13:31:11.029Z",
+      "gitCommit": "07a418859020c6ff9449415c05bf0aee142a87a4",
+      "ttlHours": 168,
+      "schema": "{\"type\": \"object\", \"properties\": {\"directories\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"main_scripts\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"ui_related\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"camera_related\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"project_structure_notes\": {\"type\": \"string\"}}}"
+    },
+    {
+      "id": "6",
+      "query": "story 文件夹在哪里？StoryNode 是如何定义和存储的？",
+      "tags": [
+        "story",
+        "文件夹在哪里",
+        "storynode",
+        "是如何定义和存储的"
+      ],
+      "scope": {
+        "directories": "/workspace",
+        "file_patterns": "*.gd,*.tscn,*.json",
+        "excludes": "node_modules,.godot"
+      },
+      "createdAt": "2026-03-28T15:05:16.479Z",
+      "gitCommit": "07a418859020c6ff9449415c05bf0aee142a87a4",
+      "ttlHours": 168,
+      "schema": "{\"type\": \"object\", \"properties\": {\"story_folder\": {\"type\": \"string\"}, \"story_node_definition\": {\"type\": \"string\"}, \"story_files\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}}"
     }
   ]
 }

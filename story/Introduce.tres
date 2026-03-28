@@ -4,5 +4,9 @@
 
 [resource]
 script = ExtResource("1_4il70")
+NodeTitle = "我"
+NodeSummary = "这里是意识的起点"
+NodeId = "0001"
+Conditions = Array[String]([])
 Choices = Array[Object]([null])
 metadata/_custom_type_script = "uid://dbftvqbd867ku"

@@ -4,7 +4,7 @@ using DialogueManagerRuntime;
 using System.Collections.Generic;
 using Godot.Collections;
 
-namespace TreeStory;
+namespace MultimodalFramework.Dialog;
 
 /// <summary>
 /// 故事节点内容 - 作为 Resource 可在编辑器中编辑

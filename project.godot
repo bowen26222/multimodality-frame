@@ -15,13 +15,13 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Multimodality Frame"
-run/main_scene="res://scenes/demo.tscn"
+run/main_scene="uid://ckg4uubcwficn"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [audio]
 
-buses/default_bus_layout="uid://btyaditcuco0k"
+buses/default_bus_layout=""
 driver/enable_input=true
 
 [autoload]

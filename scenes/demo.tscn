@@ -4,3 +4,16 @@
 
 [node name="Node3D" type="Node3D" unique_id=653325180]
 script = ExtResource("1_demo")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=2050628258]
+
+[node name="TreeNodePanal" type="Panel" parent="CanvasLayer" unique_id=150265580]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Button" type="Button" parent="CanvasLayer/TreeNodePanal" unique_id=591677006]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 15.0
+grow_horizontal = 2
