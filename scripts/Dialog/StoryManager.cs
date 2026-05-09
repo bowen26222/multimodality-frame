@@ -18,7 +18,6 @@ public partial class StoryManager : Node
     {
         Instance = this;
         myUIPositionController = new ();
-
     }
     public void SetStorys(string path)
     {
@@ -44,7 +43,23 @@ public partial class StoryManager : Node
     }
     public Control CreateStoryNode(StoryNode storyNode)
     {
+        // 使用 UIPositionController 创建 UI 元素
+        var control = myUIPositionController.CreateElement(storyNode, storyNode.NodeId, CreateStoryNodeControl);
+        return control;
+    }
+
+    private Control CreateStoryNodeControl(StoryNode storyNode)
+    {
+        // 创建一个简单的 Control 来展示 StoryNode 的内容
+        var container = new VBoxContainer();
+        var titleLabel = new Label { Text = $"Title: {storyNode.NodeTitle}" };
+        var summaryLabel = new Label { Text = $"Summary: {storyNode.NodeSummary}" };
+        var dialogPathLabel = new Label { Text = $"Dialog Path: {storyNode.DialogPath}" };
         
-        return 
+        container.AddChild(titleLabel);
+        container.AddChild(summaryLabel);
+        container.AddChild(dialogPathLabel);
+        
+        return container;
     }
 }

@@ -129,6 +129,29 @@
       "gitCommit": "07a418859020c6ff9449415c05bf0aee142a87a4",
       "ttlHours": 168,
       "schema": "{\"type\": \"object\", \"properties\": {\"story_folder\": {\"type\": \"string\"}, \"story_node_definition\": {\"type\": \"string\"}, \"story_files\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}}"
+    },
+    {
+      "id": "7",
+      "query": "What is the project structure and what technologies/frameworks are used? Is this a Godot project?",
+      "tags": [
+        "what",
+        "is",
+        "the",
+        "project",
+        "structure",
+        "and",
+        "technologies",
+        "frameworks",
+        "are",
+        "used",
+        "this",
+        "godot"
+      ],
+      "scope": "null",
+      "createdAt": "2026-05-09T12:42:25.511Z",
+      "gitCommit": "b4a3f410ae37a115371a6534f42f75ab3ee49134",
+      "ttlHours": 168,
+      "schema": "{\"type\":\"object\",\"properties\":{\"framework\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"key_files\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}}"
     }
   ]
 }
