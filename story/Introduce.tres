@@ -1,12 +1,17 @@
 [gd_resource type="Resource" script_class="StoryNode" format=3 uid="uid://bll0h7kyypot7"]
 
 [ext_resource type="Script" uid="uid://dbftvqbd867ku" path="res://scripts/Dialog/StoryNode.cs" id="1_4il70"]
+[ext_resource type="Script" uid="uid://c6n0q300y3yyi" path="res://scripts/Dialog/StoryNodeContent.cs" id="1_6yqjt"]
+
+[sub_resource type="Resource" id="Resource_djv3e"]
+script = ExtResource("1_6yqjt")
+metadata/_custom_type_script = "uid://c6n0q300y3yyi"
 
 [resource]
 script = ExtResource("1_4il70")
 NodeTitle = "我"
 NodeSummary = "这里是意识的起点"
 NodeId = "0001"
-Conditions = Array[String]([])
-Choices = Array[Object]([null])
+Conditions = Array[String]([""])
+Choices = Array[Object]([SubResource("Resource_djv3e")])
 metadata/_custom_type_script = "uid://dbftvqbd867ku"

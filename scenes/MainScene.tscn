@@ -1,6 +1,11 @@
 [gd_scene format=3 uid="uid://ckg4uubcwficn"]
 
 [ext_resource type="Script" uid="uid://dylxibulkwk1k" path="res://scripts/Camera/CameraController.cs" id="1_3mqji"]
+[ext_resource type="Script" uid="uid://dkcsy0nm4ldjw" path="res://scripts/UI/StoryNodeUIController.cs" id="2_ibiss"]
+
+[sub_resource type="Theme" id="Theme_echbf"]
+Button/font_sizes/font_size = 24
+Button/fonts/font = null
 
 [sub_resource type="LabelSettings" id="LabelSettings_echbf"]
 font_size = 32
@@ -31,53 +36,73 @@ offset_right = -960.0
 offset_bottom = -540.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = SubResource("Theme_echbf")
+script = ExtResource("2_ibiss")
 
-[node name="Button" type="Button" parent="Tree/StoryNodeUIIns" unique_id=432633966]
+[node name="StoryNameButton" type="Button" parent="Tree/StoryNodeUIIns" unique_id=980244886]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_right = 100.0
-offset_bottom = 80.0
+offset_left = -49.5
+offset_top = -26.0
+offset_right = 49.5
+offset_bottom = 26.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 30
 text = "Start"
 
-[node name="Panel" type="Panel" parent="Tree/StoryNodeUIIns" unique_id=89559148]
-layout_mode = 0
-offset_right = 457.0
-offset_bottom = 421.0
+[node name="SummaryPanel" type="Panel" parent="Tree/StoryNodeUIIns" unique_id=89559148]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -228.5
+offset_top = -183.5
+offset_right = 228.5
+offset_bottom = 183.5
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Tree/StoryNodeUIIns/Panel" unique_id=1185748891]
+[node name="VBoxContainer" type="VBoxContainer" parent="Tree/StoryNodeUIIns/SummaryPanel" unique_id=1185748891]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -41.5
-offset_right = 41.5
-offset_bottom = 131.0
+offset_left = -228.5
+offset_right = 225.5
+offset_bottom = 368.0
 grow_horizontal = 2
 
-[node name="Tatal" type="Label" parent="Tree/StoryNodeUIIns/Panel/VBoxContainer" unique_id=1284040001]
+[node name="BackButton" type="Button" parent="Tree/StoryNodeUIIns/SummaryPanel/VBoxContainer" unique_id=1506046970]
 layout_mode = 2
-text = "231232323"
+text = "返回"
+
+[node name="Title" type="Label" parent="Tree/StoryNodeUIIns/SummaryPanel/VBoxContainer" unique_id=1284040001]
+layout_mode = 2
+text = "Title"
 label_settings = SubResource("LabelSettings_echbf")
+horizontal_alignment = 1
 
-[node name="Label2" type="Label" parent="Tree/StoryNodeUIIns/Panel/VBoxContainer" unique_id=1683540921]
+[node name="ScrollContainer" type="ScrollContainer" parent="Tree/StoryNodeUIIns/SummaryPanel/VBoxContainer" unique_id=922436459]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
-text = "231232323"
+size_flags_vertical = 3
 
-[node name="Label3" type="Label" parent="Tree/StoryNodeUIIns/Panel/VBoxContainer" unique_id=770588014]
+[node name="Content" type="RichTextLabel" parent="Tree/StoryNodeUIIns/SummaryPanel/VBoxContainer/ScrollContainer" unique_id=1099193917]
 layout_mode = 2
-text = "231232323"
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "Content"
+fit_content = true
+scroll_active = false
+scroll_following = true
 
-[node name="Label4" type="Label" parent="Tree/StoryNodeUIIns/Panel/VBoxContainer" unique_id=1418596163]
+[node name="EnterButton" type="Button" parent="Tree/StoryNodeUIIns/SummaryPanel/VBoxContainer" unique_id=1138744843]
 layout_mode = 2
-text = "231232323"
-
-[node name="Label5" type="Label" parent="Tree/StoryNodeUIIns/Panel/VBoxContainer" unique_id=1839847756]
-layout_mode = 2
-text = "231232323"
+text = "进入"

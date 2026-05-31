@@ -13,11 +13,47 @@ namespace MultimodalFramework.UI
     public partial class StoryNodeUIController : Node
     {
         [Export] public PackedScene StoryNodePanel;
-        public Control CreateStoryNodeUI(StoryNode storyNode)
+        [Export] public Label TitleLabel;
+        [Export] public RichTextLabel SummaryLabel;
+        [Export] public Button StoryNameButton;
+        [Export] public Control SummaryPanel;
+        [Export] public Button BackButton;
+        [Export] public Button EnterButton;
+        
+        public override void _Ready()
         {
-            var newPanel = StoryNodePanel.Instantiate() as Button;
-            newPanel.Text = storyNode.NodeTitle;
-            return newPanel;
+            TitleLabel = GetNode<Label>("SummaryPanel/VBoxContainer/Title");
+            SummaryLabel = GetNode<RichTextLabel>("SummaryPanel/VBoxContainer/ScrollContainer/Content");
+            SummaryPanel = GetNode<Control>("SummaryPanel");
+            StoryNameButton = GetNode<Button>("StoryNameButton");
+            StoryNameButton.Pressed += OpenSummaryPanel;
+            BackButton = GetNode<Button>("SummaryPanel/VBoxContainer/BackButton");
+            BackButton.Pressed += CloseSummaryPanel;
+            EnterButton = GetNode<Button>("SummaryPanel/VBoxContainer/EnterButton");
+            EnterButton.Pressed += OnEnterButtonPressed;
+
+        }
+        public void SetStoryNode(StoryNode storyNode)
+        {
+            TitleLabel.Text = storyNode.NodeTitle;
+            SummaryLabel.Text = storyNode.NodeSummary;
+        }
+        public void OpenSummaryPanel()
+        {
+            SummaryPanel.Show();
+            StoryNameButton.Hide();
+        }
+        public void CloseSummaryPanel()
+        {
+            SummaryPanel.Hide();
+            StoryNameButton.Show();
+        }
+        public void OnEnterButtonPressed()
+        {
+            GD.Print("进入故事节点，加载对话资源...");
+            // 在这里可以添加加载对话资源的逻辑，例如：
+            // var dialogResource = ResourceLoader.Load<DialogResource>(storyNode.DialogPath);
+            // DialogManager.Instance.StartDialog(dialogResource);
         }
     }
 }
